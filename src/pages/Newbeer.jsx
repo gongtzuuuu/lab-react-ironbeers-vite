@@ -6,11 +6,11 @@
 	} */
 
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 function Newbeer() {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [newBeer, setNewBeer] = useState({
     name: "",
@@ -18,7 +18,7 @@ function Newbeer() {
     description: "",
     first_brewed: "",
     brewers_tips: "",
-    attenuation_level: "",
+    attenuation_level: 0,
     contributed_by: "",
     _id: "",
   });
@@ -31,7 +31,7 @@ function Newbeer() {
       //console.log("currentTarget", currentTarget);
       //console.log("currentValue", currentValue); // Handle
 
-      return { ...prevInput, [currentTarget]: currentValue };
+      return { ...prevInput, [currentTarget]: currentValue, _id: uuidv4() };
     });
   };
 
@@ -39,7 +39,7 @@ function Newbeer() {
     event.preventDefault();
     // if the event does not get explicitly handled, its default action should not be taken as it normally would be.
     console.log("Successfully submit!");
-    const newBeerDetail = { ...Newbeer, _id: uuidv4() };
+    const payload = newBeer;
 
     try {
       const response = await fetch(
@@ -49,13 +49,11 @@ function Newbeer() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(newBeerDetail),
+          body: JSON.stringify(payload),
         }
       );
       console.log("response", response);
-      const theNewBeer = await response.json();
-      console.log("theNewBeer", theNewBeer);
-      Navigate(`/${theNewBeer._id}`);
+      navigate(`/allbeers`);
     } catch (error) {
       console.log(error);
     }
