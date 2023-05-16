@@ -6,41 +6,56 @@
 	} */
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 function Newbeer() {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [occupation, setOccupation] = useState("");
-  const [debt, setDebt] = useState(false);
-  const [weapon, setWeapon] = useState("");
+  //const navigate = useNavigate();
+
+  const [newBeer, setNewBeer] = useState({
+    name: "",
+    tagline: "",
+    description: "",
+    first_brewed: "",
+    brewers_tips: "",
+    attenuation_level: "",
+    contributed_by: "",
+    _id: "",
+  });
+
+  const handleChange = (event) => {
+    setNewBeer((prevInput) => {
+      const currentTarget = event.target.name;
+      let currentValue = event.target.value;
+
+      //console.log("currentTarget", currentTarget);
+      //console.log("currentValue", currentValue); // Handle
+
+      return { ...prevInput, [currentTarget]: currentValue };
+    });
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("submit");
-    const payload = {
-      name,
-      occupation,
-      debt,
-      weapon,
-    };
+    // if the event does not get explicitly handled, its default action should not be taken as it normally would be.
+    console.log("Successfully submit!");
+    const newBeerDetail = { ...Newbeer, _id: uuidv4() };
+
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_API_URL}/characters`,
+        "https://ih-beers-api2.herokuapp.com/beers/new",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(newBeerDetail),
         }
       );
-      if (response.status === 201) {
-        console.log("All good");
-        const newCharacter = await response.json();
-        // Navigate to the details page
-        navigate(`/details/${newCharacter.id}`);
-      }
+      console.log("response", response);
+      const theNewBeer = await response.json();
+      console.log("theNewBeer", theNewBeer);
+      Navigate(`/${theNewBeer._id}`);
     } catch (error) {
       console.log(error);
     }
@@ -48,49 +63,65 @@ function Newbeer() {
 
   return (
     <>
-      <h1>Create</h1>
+      <h1>Add New Beer</h1>
       <form
         style={{ display: "grid", gridTemplate: "repeat(5, 1fr) / auto" }}
         onSubmit={handleSubmit}
       >
         <label>
           Name:
+          <input value={newBeer.name} name="name" onChange={handleChange} />
+        </label>
+        <label>
+          Tagline:
           <input
-            value={name}
-            onChange={(event) => {
-              setName(event.target.value);
-            }}
+            value={newBeer.tagline}
+            name="tagline"
+            onChange={handleChange}
           />
         </label>
         <label>
-          Occupation:
+          Description:
           <input
-            value={occupation}
-            onChange={(event) => {
-              setOccupation(event.target.value);
-            }}
+            type="textarea"
+            name="description"
+            value={newBeer.description}
+            onChange={handleChange}
           />
         </label>
         <label>
-          Debt:
+          First brewed:
           <input
-            type="checkbox"
-            checked={debt}
-            onChange={(event) => {
-              setDebt(event.target.checked);
-            }}
+            value={newBeer.first_brewed}
+            name="first_brewed"
+            onChange={handleChange}
           />
         </label>
         <label>
-          Weapon:
+          Brewer tips:
           <input
-            value={weapon}
-            onChange={(event) => {
-              setWeapon(event.target.value);
-            }}
+            value={newBeer.brewers_tips}
+            name="brewers_tips"
+            onChange={handleChange}
           />
         </label>
-        <button type="submit">Create</button>
+        <label>
+          Attenuation level:
+          <input
+            value={newBeer.attenuation_level}
+            name="attenuation_level"
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Contributed by:
+          <input
+            value={newBeer.contributed_by}
+            name="contributed_by"
+            onChange={handleChange}
+          />
+        </label>
+        <button type="submit">Add New Beer</button>
       </form>
     </>
   );

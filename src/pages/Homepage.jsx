@@ -20,7 +20,7 @@ function Homepage() {
         <h3>Random Beers</h3>
         <p>blablabla</p>
       </NavLink>
-      <NavLink>
+      <NavLink to="/newbeer">
         <img src={newBeerImg} alt="new beer" />
         <h3>New Beer</h3>
         <p>blablabla</p>

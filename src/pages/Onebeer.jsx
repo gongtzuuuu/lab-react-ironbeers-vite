@@ -36,6 +36,7 @@ function Onebeer() {
         ></img>
         <h4>{oneBeer.name}</h4>
         <p>{oneBeer.tagline}</p>
+        <p>{oneBeer.description}</p>
         <NavLink to="/allbeers">Back</NavLink>
       </div>
     </div>
